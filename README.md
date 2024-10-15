@@ -1,10 +1,10 @@
-## Mini_Project5
+## Mini_Project6
 
 Author: Fuyao Li
 
 ### Requirements:
-+ Connect to a SQL database
-+ Perform CRUD operations (create, read, update, and delete)
++ Design a complex SQL query involving joins, aggregation, and sorting
++ Provide an explanation for what the query is doing and the expected results
 
 ### Preparation:
 + Built virtual environment: `pip install -r requirements.txt`
