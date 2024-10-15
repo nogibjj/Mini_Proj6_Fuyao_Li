@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 import pandas as pd
 
 
-# load the csv file and insert into a new sqlite3 database
+# load the csv file and insert into a new table
 def load(dataset1="data/trump.csv"):
     """ "Transforms and Loads data into the local SQLite3 database"""
     df1 = pd.read_csv(dataset1, delimiter=",", skiprows=1)

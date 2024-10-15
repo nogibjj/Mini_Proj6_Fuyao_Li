@@ -8,14 +8,27 @@ Author: Fuyao Li
 
 ### Project Structure:
 `.devcontainer/`: Contains files for development container setup.
+
 `.github/workflows/`: Includes CI/CD automation via GitHub Actions.
 + install: install requirements.txt
 + test: runs pytest for functions; runs all test files matching the pattern test_*.py
 + format: format using black formatter
 + lint: using Ruff for testing, which makes the process faster
+
+`mylib`:
++ `extract.py`: extract the dataset from URL and save the contents to the specified file path.
++ `query.py`: 
+    - `join_sql()`: Adds a timezone column to the FL_citydb table and updates its values based on latitude ranges.
+    - `agg_order_sql()`: Uses a CTE (Common Table Expression) to calculate average latitude and city counts by state, joins these results with FL_citydb, and returns the top 10 ordered by average latitude.
++ `transform_load.py`:
+
+
 `main.py`: A script interacting with the SQLite database by creating tables and inserting user records.
+
 `test_main.py`: Tests database operations to ensure correctness.
+
 `Makefile`: Provides commands for managing the project.
+
 `Dockerfile`: Ensures containerization.
 
 ### Preparation:
