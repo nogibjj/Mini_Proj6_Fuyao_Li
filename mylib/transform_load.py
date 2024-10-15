@@ -22,7 +22,6 @@ def load(dataset1="data/trump.csv"):
         http_path=sql_http,
     ) as connection:
         with connection.cursor() as cursor:
-            c = connection.cursor()
             # INSERT TAKES TOO LONG
             cursor.execute("SHOW TABLES FROM default LIKE 'FL_citydb*'")
             result = cursor.fetchall()
