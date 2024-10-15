@@ -1,89 +1,88 @@
 """Query the database"""
 
 import sqlite3
+from databricks import sql
+from dotenv import load_dotenv
+import os
 
 
-# Define a file to show database operations
-LOG_FILE = "db_log.md"
+def join_sql():
+    """Joins a time zone column based on latitude using Databricks."""
+    load_dotenv()
+    databricks_key = os.getenv("DATABRICKS_KEY")
+    server_host_name = os.getenv("SEVER_HOST_NAME")
+    sql_http = os.getenv("SQL_HTTP")
+
+    with sql.connect(
+        access_token=databricks_key,
+        server_hostname=server_host_name,
+        http_path=sql_http,
+    ) as connection:
+        with connection.cursor() as cursor:
+            # Add a new timezone column if it does not exist
+            cursor.execute(
+                "ALTER TABLE FL_citydb ADD COLUMN timezone STRING"
+            )
+
+            # Use latitude to determine timezone and update rows
+            update_query = """
+            UPDATE FL_citydb
+            SET timezone = CASE
+                WHEN lat BETWEEN 24.396308 AND 31.000968 THEN 'Eastern'
+                WHEN lat BETWEEN 31.000969 AND 49.384358 THEN 'Central'
+                ELSE 'Unknown'
+            END
+            """
+            cursor.execute(update_query)
+            result = cursor.fetchall()
+
+        cursor.close()
+        connection.close()
+    return result
 
 
-def add_operation(query):
-    """adds to a query markdown file"""
-    with open(LOG_FILE, "a") as file:
-        file.write(f"```sql\n{query}\n```\n\n")
+def agg_order_sql():
+    load_dotenv()
+    databricks_key = os.getenv("DATABRICKS_KEY")
+    server_host_name = os.getenv("SEVER_HOST_NAME")
+    sql_http = os.getenv("SQL_HTTP")
 
+    with sql.connect(
+        access_token=databricks_key,
+        server_hostname=server_host_name,
+        http_path=sql_http,
+    ) as connection:
+        with connection.cursor() as cursor:
+            query = """
+            WITH city_lat AS (
+                SELECT 
+                    state,
+                    AVG(lat) AS avg_latitude,
+                    COUNT(*) AS city_count
+                FROM FL_citydb
+                GROUP BY state
+            )
 
-def read_data():
-    """read data"""
-    conn = sqlite3.connect("CityDB.db")
-    c = conn.cursor()
-    c.execute("SELECT * FROM CityDB")
-    data = c.fetchall()
-    # print(data)
-    add_operation("SELECT * FROM CityDB")
-    return data
+            SELECT 
+                FL_citydb.*,
+                city_lat.avg_latitude,
+                city_lat.city_count
+            FROM 
+                FL_citydb
+            JOIN
+                city_lat ON FL_citydb.state = city_lat.state
+            ORDER BY 
+                city_lat.avg_latitude ASC
+            LIMIT 10;
+            """
+            cursor.execute(query)
+            result = cursor.fetchall()
 
+        cursor.close()
+        connection.close()
+    return result
 
-def create_subject(query):
-    """create example query"""
-    date, location, city, state, lat, lng = query
-    conn = sqlite3.connect("CityDB.db")
-    c = conn.cursor()
-    c.execute(
-        """
-        INSERT INTO CityDB (date, location, city, state, lat, lng) 
-        VALUES (?, ?, ?, ?, ?, ?)
-        """,
-        (date, location, city, state, lat, lng),
-    )
-    conn.commit()
-    c.close()
-    conn.close()
-
-    # Log the query
-    add_operation(
-        f"""INSERT INTO ServeTimesDB VALUES 
-        ({date}, {location}, {city}, {state}, {lat}, {lng});"""
-    )
-    return True
-
-
-def update_subject(query):
-    """update example query"""
-    record_id, date, location, city, state, lat, lng = query
-    conn = sqlite3.connect("CityDB.db")
-    c = conn.cursor()
-    c.execute(
-        """
-        UPDATE CityDB SET date=?, location=?, city=?, 
-        state=?, lat=?, lng=? WHERE id=?
-        """,
-        (date, location, city, state, lat, lng, record_id),
-    )
-    conn.commit()
-    c.close()
-    conn.close()
-
-    # Log the query
-    add_operation(
-        f"""UPDATE ServeTimesDB SET 
-        date={date}, location={location},
-        city={city}, state={state}, 
-        lat={lat}, lng={lng}
-        WHERE id={record_id};"""
-    )
-    return True
-
-
-def delete_subject(record_id):
-    """delete example query"""
-    conn = sqlite3.connect("CityDB.db")
-    c = conn.cursor()
-    c.execute("DELETE FROM CityDB WHERE id=?", (record_id,))
-    conn.commit()
-    c.close()
-    conn.close()
-
-    # Log the query
-    add_operation(f"DELETE FROM CityDB WHERE id={record_id};")
-    return True
+if __name__ == "__main__":
+    # result = join_sql()
+    result = agg_order_sql()
+    print(result)

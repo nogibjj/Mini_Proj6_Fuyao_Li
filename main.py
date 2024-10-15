@@ -4,38 +4,23 @@ ETL-Query script
 from mylib.extract import extract
 from mylib.transform_load import load
 from mylib.query import (
-    update_subject,
-    delete_subject,
-    create_subject,
-    read_data,
+    join_sql,
+    agg_order_sql,
 )
 
 
 if __name__ == "__main__":
-    url = "https://github.com/fivethirtyeight/data/blob/master/presidential-campaign-trail/trump.csv?raw=true"
-    file_path = "data/trump.csv"
-    database = 'CityDB.db'
+    url1 = "https://github.com/fivethirtyeight/data/blob/master/presidential-campaign-trail/trump.csv?raw=true"
+    file_path1 = "data/trump.csv"
 
     print("Extact the database:")
-    extract(url, file_path)
+    extract(url1, file_path1)
 
-    print("Load data")
-    load(file_path)
-
-    data = read_data()
-    print(len(data))
-
-    create_query1 = ("6/27/2018", "Durham South", "Durham", "NC", 35.99, 78.90)
-    create_subject(create_query1)
+    load(file_path1)
     
-    create_query2 = ("10/22/2018", "Charlotte North", "Charlotte", "NC", 35.22, 80.84)
-    create_subject(create_query2)
+    result = join_sql()
+    print(result)
 
-    update_query = (107, "8/29/2018", "Durham South", "Durham", "NC", 35.99, 78.90)
-    update_subject(update_query)
-
-    delete_subject(99)
-
-    data = read_data()
-    print(len(data))
+    result = agg_order_sql()
+    print(result)
     

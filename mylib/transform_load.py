@@ -1,44 +1,59 @@
 """
 Transforms and Loads data into the local SQLite3 database
 """
-import sqlite3
-import csv
+import os
+from databricks import sql
+from dotenv import load_dotenv
+import pandas as pd
 
 
 # load the csv file and insert into a new sqlite3 database
-def load(dataset="data/trump.csv"):
+def load(dataset1="data/trump.csv"):
     """ "Transforms and Loads data into the local SQLite3 database"""
-    with open(dataset, newline="", encoding="utf-8") as file:
-        payload = csv.reader(file, delimiter=",")
-        # skips the header of csv
-        next(payload)
-        conn = sqlite3.connect("CityDB.db")
-        c = conn.cursor()
-        c.execute("DROP TABLE IF EXISTS CityDB")
-        c.execute(
+    df1 = pd.read_csv(dataset1, delimiter=",", skiprows=1)
+
+    load_dotenv()
+    databricks_key = os.getenv("DATABRICKS_KEY")
+    sever_host_name = os.getenv("SEVER_HOST_NAME")
+    sql_http = os.getenv("SQL_HTTP")
+    with sql.connect(
+        access_token=databricks_key,
+        server_hostname=sever_host_name,
+        http_path=sql_http,
+    ) as connection:
+        with connection.cursor() as cursor:
+            c = connection.cursor()
+            # INSERT TAKES TOO LONG
+            cursor.execute("SHOW TABLES FROM default LIKE 'FL_citydb*'")
+            result = cursor.fetchall()
+            if result:
+                cursor.execute("DROP TABLE fl_citydb")
+            
+            cursor.execute(
+                """
+                CREATE TABLE IF NOT EXISTS FL_citydb (
+                    date string,
+                    location string,
+                    city string,
+                    state string,
+                    lat float,
+                    lng float
+                )
             """
-            CREATE TABLE CityDB (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                date TEXT,
-                location TEXT,
-                city TEXT,
-                state TEXT,
-                lat FLOAT,
-                lng FLOAT
             )
-        """
-        )
-    
-        # insert
-        c.executemany(
-            """
-            INSERT INTO CityDB 
-            (date, location, city, state, lat, lng) 
-            VALUES (?, ?, ?, ?, ?, ?)
-            """,
-            payload,
-        )
-        conn.commit()
-        conn.close()
+            # insert
+            values_list = [tuple(row) for _, row in df1.iterrows()]
+            insert_query = (
+                f"INSERT INTO FL_citydb VALUES {','.join(str(x) for x in values_list)}"
+            )
+            cursor.execute(insert_query)
+            result = cursor.fetchall()
+
+            cursor.close()
+            connection.close()
         
-    return "CityDB.db"
+    return result
+
+
+if __name__ == "__main__":
+    load()
