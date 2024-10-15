@@ -14,16 +14,15 @@ jobs:
       - uses: actions/setup-python@v3
         with:
           python-version: 3.12
-      - name: Set up Environment Variables
-        run: |
-          echo "SERVER_HOST_NAME=${{ secrets.SERVER_HOST_NAME }}" >> $GITHUB_ENV
-          echo "SQL_HTTP=${{ secrets.SQL_HTTP }}" >> $GITHUB_ENV
-          echo "DATABRICKS_KEY=${{ secrets.DATABRICKS_KEY }}" >> $GITHUB_ENV
       - name: install packages
         run: make install
       - name: lint
         run: make lint
       - name: test
+        env:
+          SERVER_HOST_NAME: ${{ secrets.SERVER_HOST_NAME }}
+          SQL_HTTP: ${{ secrets.SQL_HTTP }}
+          DATABRICKS_KEY: ${{ secrets.DATABRICKS_KEY }}
         run: make test
       - name: format
         run: make format
