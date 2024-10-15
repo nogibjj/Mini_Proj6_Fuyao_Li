@@ -52,7 +52,3 @@ def load(dataset1="data/trump.csv"):
             connection.close()
         
     return result
-
-
-if __name__ == "__main__":
-    load()
