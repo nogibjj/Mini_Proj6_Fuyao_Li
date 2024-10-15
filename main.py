@@ -9,18 +9,17 @@ from mylib.query import (
 )
 
 
-if __name__ == "__main__":
-    url1 = "https://github.com/fivethirtyeight/data/blob/master/presidential-campaign-trail/trump.csv?raw=true"
-    file_path1 = "data/trump.csv"
+url1 = "https://github.com/fivethirtyeight/data/blob/master/presidential-campaign-trail/trump.csv?raw=true"
+file_path1 = "data/trump.csv"
 
-    print("Extact the database:")
-    extract(url1, file_path1)
+print("Extact the database:")
+extract(url1, file_path1)
 
-    load(file_path1)
-    
-    result = join_sql()
-    print(result)
+load(file_path1)
 
-    result = agg_order_sql()
-    print(result)
+result = join_sql()
+print(result)
+
+result = agg_order_sql()
+print(result)
     
