@@ -16,3 +16,4 @@ Author: Fuyao Li
 ### References:
 https://github.com/nogibjj/sqlite-lab
 ### Data resource:
+https://github.com/fivethirtyeight/data/blob/master/presidential-campaign-trail/trump.csv
