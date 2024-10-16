@@ -9,7 +9,7 @@ def join_sql():
     """Joins a time zone column based on latitude using Databricks."""
     load_dotenv()
     databricks_key = os.getenv("DATABRICKS_KEY")
-    server_host_name = os.getenv("SEVER_HOST_NAME")
+    server_host_name = os.getenv("SERVER_HOST_NAME")
     sql_http = os.getenv("SQL_HTTP")
 
     with sql.connect(
@@ -43,7 +43,7 @@ def join_sql():
 def agg_order_sql():
     load_dotenv()
     databricks_key = os.getenv("DATABRICKS_KEY")
-    server_host_name = os.getenv("SEVER_HOST_NAME")
+    server_host_name = os.getenv("SERVER_HOST_NAME")
     sql_http = os.getenv("SQL_HTTP")
 
     with sql.connect(

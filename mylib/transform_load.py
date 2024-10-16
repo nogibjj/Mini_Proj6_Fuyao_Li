@@ -14,7 +14,7 @@ def load(dataset1="data/trump.csv"):
 
     load_dotenv()
     databricks_key = os.getenv("DATABRICKS_KEY")
-    sever_host_name = os.getenv("SEVER_HOST_NAME")
+    sever_host_name = os.getenv("SERVER_HOST_NAME")
     sql_http = os.getenv("SQL_HTTP")
     with sql.connect(
         access_token=databricks_key,

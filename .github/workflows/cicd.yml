@@ -19,7 +19,7 @@ jobs:
       - name: lint
         run: make lint
       - name: test
-        with:
+        env:
           SERVER_HOST_NAME: ${{ secrets.SERVER_HOST_NAME }}
           SQL_HTTP: ${{ secrets.SQL_HTTP }}
           DATABRICKS_KEY: ${{ secrets.DATABRICKS_KEY }}

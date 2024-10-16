@@ -18,10 +18,10 @@ Author: Fuyao Li
 `mylib`:
 + `extract.py`: extract the dataset from URL and save the contents to the specified file path.
 + `query.py`: 
-    - `join_sql()`: Adds a timezone column to the FL_citydb table and updates its values based on latitude ranges.
-    - `agg_order_sql()`: Uses a CTE (Common Table Expression) to calculate average latitude and city counts by state, joins these results with FL_citydb, and returns the top 10 ordered by average latitude.
+    - `join_sql()`: add a timezone column to the FL_citydb table and updates its values based on latitude ranges.
+    - `agg_order_sql()`: use a CTE (Common Table Expression) to calculate average latitude and city counts by state, joins these results with FL_citydb, and returns the top 10 ordered by average latitude.
 + `transform_load.py`:
-
+    - `load()`: read a CSV file, connects to a Databricks SQL instance, checks if the FL_citydb table exists, and drops it if necessary.
 
 `main.py`: A script interacting with the SQLite database by creating tables and inserting user records.
 
@@ -35,7 +35,9 @@ Author: Fuyao Li
 + Built virtual environment: `pip install -r requirements.txt`
 
 ### Description of the Query：
+```python
 
+```
 
 
 ### References:
